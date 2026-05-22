@@ -5,8 +5,8 @@ const path = require('path');
 const http = require('http');
 
 // Import routes
-const authRoutes = require('./routes/auth');
-const roomRoutes = require('./routes/rooms');
+const authRoutes = require('./src/routes/auth');
+const roomRoutes = require('./src/routes/rooms');
 
 const app = express();
 const server = http.createServer(app);
