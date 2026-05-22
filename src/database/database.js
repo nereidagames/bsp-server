@@ -1,7 +1,13 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const fs = require('fs');
 
-const DB_PATH = path.join(__dirname, '../../data/bsp.db');
+const dataDir = path.join(__dirname, '../../data');
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+const DB_PATH = path.join(dataDir, 'bsp.db');
 
 class Database {
   constructor() {
