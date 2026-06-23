@@ -16,9 +16,39 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve crossdomain.xml at root level for Flash/CORS compliance
+app.get('/crossdomain.xml', (req, res) => {
+  res.type('application/xml');
+  res.send(`<?xml version="1.0"?>
+<!DOCTYPE cross-domain-policy SYSTEM "http://www.adobe.com/xml/dtds/cross-domain-policy.dtd">
+<cross-domain-policy>
+    <allow-access-from domain="*" to-ports="80,443,*" />
+    <allow-http-request-headers-from domain="*" headers="*" />
+</cross-domain-policy>`);
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/rooms', roomRoutes);
+
+// Test endpoint - used by Flash to verify connection
+app.get('/api/test', (req, res) => {
+  res.status(200).json({ status: 'ok', message: 'BSP Server is running' });
+});
+
+// Geolocation endpoint - used by LocationByIPService to determine user's country
+app.get('/api/geolocation/country', (req, res) => {
+  // Get client IP
+  const clientIp = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  
+  // For now, default to 'us' - you can integrate a real geolocation service later
+  // Popular services: MaxMind GeoIP2, IP2Location, GeoLite2, etc.
+  res.json({
+    clientCountry: 'us',
+    targetCountry: 'us',
+    clientIp: clientIp
+  });
+});
 
 // Health check endpoint
 app.get('/health', (req, res) => {
