@@ -27,6 +27,45 @@ app.get('/crossdomain.xml', (req, res) => {
 </cross-domain-policy>`);
 });
 
+// Bootstrap config endpoints used by the Flash client
+app.get(['/api/endpoints/server_endpoint.json', '/api/endpoints/server_endpoint_:version.json'], (req, res) => {
+  const version = req.params.version || 'live';
+  res.json({
+    platforms: {
+      web: { active: true },
+      android: { active: true },
+      ios: { active: true }
+    },
+    regions: {
+      eu: {
+        url: process.env.GAME_HOST || 'https://bsp-server-6gys.onrender.com',
+        countries: ['eu', 'de', 'fr', 'pl', 'uk', 'nl', 'es', 'it'],
+        under_maintenance: false
+      },
+      us: {
+        url: process.env.GAME_HOST || 'https://bsp-server-6gys.onrender.com',
+        countries: ['us', 'ca', 'mx', 'br', 'ar'],
+        under_maintenance: false
+      }
+    },
+    version,
+    server_version: version
+  });
+});
+
+app.get('/app/appsettings.json', (req, res) => {
+  res.json({
+    configs: {
+      game_version: '6.0.0',
+      server_version: 'live',
+      payments_web_uri: '',
+      payments_api_uri: '',
+      payments_offers_api_uri: ''
+    },
+    configscountry: {}
+  });
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/rooms', roomRoutes);
